@@ -1,4 +1,4 @@
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import logoImg from '../assets/SHANAHAN-UNI-LOGO.png';
 
@@ -60,21 +60,47 @@ export function ProtectedRoute() {
         </div>
 
         <nav style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1 }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-            padding: '10px 14px',
-            borderRadius: 'var(--radius-md)',
-            fontSize: 14,
-            fontWeight: 500,
-            color: 'var(--primary-200)',
-            background: 'rgba(212,160,23,0.08)',
-            border: '1px solid rgba(212,160,23,0.15)',
-          }}>
+          <NavLink
+            to="/dashboard"
+            style={({ isActive }) => ({
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+              padding: '10px 14px',
+              borderRadius: 'var(--radius-md)',
+              fontSize: 14,
+              fontWeight: 500,
+              textDecoration: 'none',
+              transition: 'all 0.2s',
+              color: isActive ? 'var(--primary-200)' : 'var(--text-secondary)',
+              background: isActive ? 'rgba(212,160,23,0.08)' : 'transparent',
+              border: isActive ? '1px solid rgba(212,160,23,0.15)' : '1px solid transparent',
+            })}
+          >
             <span>📊</span>
             <span>Admissions Status</span>
-          </div>
+          </NavLink>
+
+          <NavLink
+            to="/profile"
+            style={({ isActive }) => ({
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+              padding: '10px 14px',
+              borderRadius: 'var(--radius-md)',
+              fontSize: 14,
+              fontWeight: 500,
+              textDecoration: 'none',
+              transition: 'all 0.2s',
+              color: isActive ? 'var(--primary-200)' : 'var(--text-secondary)',
+              background: isActive ? 'rgba(212,160,23,0.08)' : 'transparent',
+              border: isActive ? '1px solid rgba(212,160,23,0.15)' : '1px solid transparent',
+            })}
+          >
+            <span>👤</span>
+            <span>Profile & Security</span>
+          </NavLink>
         </nav>
 
         <div style={{ borderTop: '1px solid var(--border-default)', paddingTop: 16 }}>
