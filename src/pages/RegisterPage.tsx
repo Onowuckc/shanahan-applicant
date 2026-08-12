@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/client';
 import logoImg from '../assets/SHANAHAN-UNI-LOGO.png';
+import { AlertIcon, CheckIcon } from '../components/Icons';
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -27,19 +28,13 @@ export default function RegisterPage() {
   const [success, setSuccess] = useState('');
 
   useEffect(() => {
-    // Try to load programs from backend
     api.get('/admin/programs')
       .then(res => {
         setPrograms(res.data.data || []);
       })
       .catch(err => {
-        console.warn('Failed to fetch programs list from backend, using default fallback list.', err);
-        // Fallback standard programs
-        setPrograms([
-          { id: '1', name: 'B.Sc. Computer Science' },
-          { id: '2', name: 'B.Sc. Cybersecurity' },
-          { id: '3', name: 'B.Sc. Software Engineering' }
-        ]);
+        console.error('Failed to fetch programs list from backend.', err);
+        setPrograms([]);
       });
   }, []);
 
@@ -98,9 +93,12 @@ export default function RegisterPage() {
             color: 'var(--danger-500)',
             fontSize: 13,
             marginBottom: 20,
-            textAlign: 'center'
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 6
           }}>
-            ⚠️ {error}
+            <AlertIcon size={16} /> {error}
           </div>
         )}
 
@@ -113,9 +111,12 @@ export default function RegisterPage() {
             color: 'var(--success-500)',
             fontSize: 13,
             marginBottom: 20,
-            textAlign: 'center'
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 6
           }}>
-            🎉 {success}
+            <CheckIcon size={16} /> {success}
           </div>
         )}
 

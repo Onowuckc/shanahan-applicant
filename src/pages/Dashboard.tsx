@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/client';
+import { CheckIcon, AlertIcon, CardIcon, CrossIcon, AcademicIcon, ZapIcon, ClockIcon } from '../components/Icons';
 
 export default function Dashboard() {
   const { user, setUser } = useAuth();
@@ -266,6 +267,15 @@ export default function Dashboard() {
     }
   };
 
+  const handleGatewayProceed = () => {
+    if (!authUrl) return;
+    if (authUrl.includes('SU_MOCK_') || !authUrl.includes('checkout.paystack.com')) {
+      handleSimulateVerify();
+    } else {
+      window.location.href = authUrl;
+    }
+  };
+
   if (loading) return <div className="loading-page"><div className="spinner" /></div>;
 
   const hasPaidApplicationFee = profile?.payments?.some((p: any) =>
@@ -285,18 +295,23 @@ export default function Dashboard() {
 
   return (
     <div className="animate-fade" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-      {/* Header Card */}
-      <div style={{
-        background: 'linear-gradient(135deg, var(--primary-800), var(--primary-900))',
-        border: '1px solid var(--border-default)',
-        borderRadius: 'var(--radius-lg)',
-        padding: '32px 40px',
-        boxShadow: 'var(--shadow-md)',
-      }}>
-        <h1 style={{ fontSize: 24, margin: 0 }}>Hello, {profile?.firstName || 'Applicant'}!</h1>
-        <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginTop: 4 }}>
-          Application ID: <strong style={{ color: 'var(--primary-200)', fontFamily: 'monospace' }}>{profile?.applicationNo}</strong>
-        </p>
+      {/* Opus Hero Welcome Banner */}
+      <div className="hero-banner">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 20 }}>
+          <div>
+            <h1 className="hero-title">Hello, {profile?.firstName || 'Applicant'}!</h1>
+            <p className="hero-subtitle">
+              Application Ref ID: <strong style={{ color: 'var(--accent-400)', fontFamily: 'monospace' }}>{profile?.applicationNo}</strong>
+              <span style={{ margin: '0 8px', opacity: 0.5 }}>|</span>
+              Desired Major: <strong style={{ color: '#FFF' }}>{profile?.program?.name || 'Undergraduate Degree'}</strong>
+            </p>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <span className="badge badge-gold" style={{ fontSize: 11, padding: '4px 12px' }}>
+              Admission Status: {admissionStatus}
+            </span>
+          </div>
+        </div>
       </div>
 
       {!hasPaidApplicationFee ? (
@@ -309,14 +324,14 @@ export default function Dashboard() {
             </div>
 
             {formSuccess && (
-              <div style={{ padding: 12, background: 'rgba(34,197,94,0.1)', border: '1px solid var(--success-500)', borderRadius: 'var(--radius-md)', color: 'var(--success-500)', fontSize: 13, marginBottom: 16 }}>
-                🎉 {formSuccess}
+              <div style={{ padding: 12, background: 'rgba(34,197,94,0.1)', border: '1px solid var(--success-500)', borderRadius: 'var(--radius-md)', color: 'var(--success-500)', fontSize: 13, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 6 }}>
+                <CheckIcon size={16} /> {formSuccess}
               </div>
             )}
 
             {formError && (
-              <div style={{ padding: 12, background: 'rgba(239,68,68,0.1)', border: '1px solid var(--danger-500)', borderRadius: 'var(--radius-md)', color: 'var(--danger-500)', fontSize: 13, marginBottom: 16 }}>
-                ⚠️ {formError}
+              <div style={{ padding: 12, background: 'rgba(239,68,68,0.1)', border: '1px solid var(--danger-500)', borderRadius: 'var(--radius-md)', color: 'var(--danger-500)', fontSize: 13, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 6 }}>
+                <AlertIcon size={16} /> {formError}
               </div>
             )}
 
@@ -383,12 +398,12 @@ export default function Dashboard() {
                 <div className="form-group">
                   <label className="form-label">Passport Photograph</label>
                   <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, setPassportPhotoUrl)} />
-                  {passportPhotoUrl && <div style={{ fontSize: 11, color: 'var(--success-500)', marginTop: 4 }}>✓ Document Uploaded</div>}
+                  {passportPhotoUrl && <div style={{ fontSize: 11, color: 'var(--success-500)', marginTop: 4, display: 'flex', alignItems: 'center', gap: 4 }}><CheckIcon size={12} /> Document Uploaded</div>}
                 </div>
                 <div className="form-group">
                   <label className="form-label">O'Level Result (WAEC/NECO)</label>
                   <input type="file" accept="image/*,application/pdf" onChange={(e) => handleFileChange(e, setOLevelResultUrl)} />
-                  {oLevelResultUrl && <div style={{ fontSize: 11, color: 'var(--success-500)', marginTop: 4 }}>✓ Document Uploaded</div>}
+                  {oLevelResultUrl && <div style={{ fontSize: 11, color: 'var(--success-500)', marginTop: 4, display: 'flex', alignItems: 'center', gap: 4 }}><CheckIcon size={12} /> Document Uploaded</div>}
                 </div>
               </div>
 
@@ -396,12 +411,12 @@ export default function Dashboard() {
                 <div className="form-group">
                   <label className="form-label">Birth Certificate</label>
                   <input type="file" accept="image/*,application/pdf" onChange={(e) => handleFileChange(e, setBirthCertificateUrl)} />
-                  {birthCertificateUrl && <div style={{ fontSize: 11, color: 'var(--success-500)', marginTop: 4 }}>✓ Document Uploaded</div>}
+                  {birthCertificateUrl && <div style={{ fontSize: 11, color: 'var(--success-500)', marginTop: 4, display: 'flex', alignItems: 'center', gap: 4 }}><CheckIcon size={12} /> Document Uploaded</div>}
                 </div>
                 <div className="form-group">
                   <label className="form-label">UTME Result Slip</label>
                   <input type="file" accept="image/*,application/pdf" onChange={(e) => handleFileChange(e, setUtmeResultUrl)} />
-                  {utmeResultUrl && <div style={{ fontSize: 11, color: 'var(--success-500)', marginTop: 4 }}>✓ Document Uploaded</div>}
+                  {utmeResultUrl && <div style={{ fontSize: 11, color: 'var(--success-500)', marginTop: 4, display: 'flex', alignItems: 'center', gap: 4 }}><CheckIcon size={12} /> Document Uploaded</div>}
                 </div>
               </div>
 
@@ -409,12 +424,12 @@ export default function Dashboard() {
                 <div className="form-group">
                   <label className="form-label">State of Origin Certificate</label>
                   <input type="file" accept="image/*,application/pdf" onChange={(e) => handleFileChange(e, setStateOfOriginCertUrl)} />
-                  {stateOfOriginCertUrl && <div style={{ fontSize: 11, color: 'var(--success-500)', marginTop: 4 }}>✓ Document Uploaded</div>}
+                  {stateOfOriginCertUrl && <div style={{ fontSize: 11, color: 'var(--success-500)', marginTop: 4, display: 'flex', alignItems: 'center', gap: 4 }}><CheckIcon size={12} /> Document Uploaded</div>}
                 </div>
                 <div className="form-group">
                   <label className="form-label">Medical Fitness Certificate</label>
                   <input type="file" accept="image/*,application/pdf" onChange={(e) => handleFileChange(e, setMedicalCertUrl)} />
-                  {medicalCertUrl && <div style={{ fontSize: 11, color: 'var(--success-500)', marginTop: 4 }}>✓ Document Uploaded</div>}
+                  {medicalCertUrl && <div style={{ fontSize: 11, color: 'var(--success-500)', marginTop: 4, display: 'flex', alignItems: 'center', gap: 4 }}><CheckIcon size={12} /> Document Uploaded</div>}
                 </div>
               </div>
 
@@ -422,12 +437,12 @@ export default function Dashboard() {
                 <div className="form-group">
                   <label className="form-label">JAMB Admission Letter</label>
                   <input type="file" accept="image/*,application/pdf" onChange={(e) => handleFileChange(e, setJambAdmissionLetterUrl)} />
-                  {jambAdmissionLetterUrl && <div style={{ fontSize: 11, color: 'var(--success-500)', marginTop: 4 }}>✓ Document Uploaded</div>}
+                  {jambAdmissionLetterUrl && <div style={{ fontSize: 11, color: 'var(--success-500)', marginTop: 4, display: 'flex', alignItems: 'center', gap: 4 }}><CheckIcon size={12} /> Document Uploaded</div>}
                 </div>
                 <div className="form-group">
                   <label className="form-label">Guarantor Letter / Form</label>
                   <input type="file" accept="image/*,application/pdf" onChange={(e) => handleFileChange(e, setGuarantorFormUrl)} />
-                  {guarantorFormUrl && <div style={{ fontSize: 11, color: 'var(--success-500)', marginTop: 4 }}>✓ Document Uploaded</div>}
+                  {guarantorFormUrl && <div style={{ fontSize: 11, color: 'var(--success-500)', marginTop: 4, display: 'flex', alignItems: 'center', gap: 4 }}><CheckIcon size={12} /> Document Uploaded</div>}
                 </div>
               </div>
 
@@ -443,7 +458,7 @@ export default function Dashboard() {
               <h3 className="section-card-title">Checkout Application Fee</h3>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16, textAlign: 'center', padding: '16px 8px' }}>
-              <div style={{ fontSize: 48 }}>💳</div>
+              <div style={{ display: 'flex', justifyContent: 'center' }}><CardIcon size={48} color="var(--accent-400)" /></div>
               <div style={{ fontSize: 14, color: 'var(--text-secondary)' }}>
                 To submit your portfolio for academic review, please pay the required application fee:
               </div>
@@ -473,7 +488,7 @@ export default function Dashboard() {
 
               {admissionStatus === 'PENDING' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'center', textAlign: 'center', padding: '16px 0' }}>
-                  <div style={{ fontSize: 48 }}>⏳</div>
+                  <ClockIcon size={48} color="var(--warning-500)" />
                   <div style={{ fontWeight: 700, fontSize: 18, color: 'var(--warning-500)' }}>Under Academic Evaluation</div>
                   <p style={{ fontSize: 13, color: 'var(--text-secondary)', maxWidth: 400, lineHeight: 1.6 }}>
                     Your application fee has been verified and your documents are under review. The Admissions Board is auditing your credentials. Check back soon.
@@ -483,7 +498,7 @@ export default function Dashboard() {
 
               {admissionStatus === 'REJECTED' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'center', textAlign: 'center', padding: '16px 0' }}>
-                  <div style={{ fontSize: 48 }}>❌</div>
+                  <CrossIcon size={48} color="var(--danger-500)" />
                   <div style={{ fontWeight: 700, fontSize: 18, color: 'var(--danger-500)' }}>Application Unsuccessful</div>
                   <p style={{ fontSize: 13, color: 'var(--text-secondary)', maxWidth: 400, lineHeight: 1.6 }}>
                     We regret to inform you that we are unable to offer you admission for the desired major at this time. We wish you success in your future academic goals.
@@ -493,7 +508,7 @@ export default function Dashboard() {
 
               {admissionStatus === 'ADMITTED' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center', textAlign: 'center', padding: '16px 0' }}>
-                  <div style={{ fontSize: 48 }}>🎉</div>
+                  <CheckIcon size={48} color="var(--success-500)" />
                   <div style={{ fontWeight: 700, fontSize: 18, color: 'var(--success-500)' }}>Offer of Admission Available!</div>
                   <p style={{ fontSize: 13, color: 'var(--text-secondary)', maxWidth: 420, lineHeight: 1.6 }}>
                     Congratulations! You have been provisionally admitted into Shanahan University to study <strong>{profile?.program?.name || 'your chosen major'}</strong>.
@@ -575,25 +590,25 @@ export default function Dashboard() {
               <h3 className="modal-title">
                 {paymentType === 'application_fee' ? 'Application Fee Payment' : 'Admission Fee Payment'}
               </h3>
-              <button className="modal-close" onClick={() => { if (!verifying && !newMatric) setShowPayModal(false); }}>✕</button>
+              <button className="modal-close" onClick={() => { if (!verifying && !newMatric) setShowPayModal(false); }}><CrossIcon size={16} /></button>
             </div>
             <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {errorMsg && (
-                <div style={{ padding: 12, background: 'rgba(239,68,68,0.1)', border: '1px solid var(--danger-500)', borderRadius: 'var(--radius-md)', color: 'var(--danger-500)', fontSize: 13, textAlign: 'center' }}>
-                  ⚠️ {errorMsg}
+                <div style={{ padding: 12, background: 'rgba(239,68,68,0.1)', border: '1px solid var(--danger-500)', borderRadius: 'var(--radius-md)', color: 'var(--danger-500)', fontSize: 13, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                  <AlertIcon size={16} /> {errorMsg}
                 </div>
               )}
 
               {successMsg && (
-                <div style={{ padding: 12, background: 'rgba(34,197,94,0.1)', border: '1px solid var(--success-500)', borderRadius: 'var(--radius-md)', color: 'var(--success-500)', fontSize: 13, textAlign: 'center' }}>
-                  🎉 {successMsg}
+                <div style={{ padding: 12, background: 'rgba(34,197,94,0.1)', border: '1px solid var(--success-500)', borderRadius: 'var(--radius-md)', color: 'var(--success-500)', fontSize: 13, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                  <CheckIcon size={16} /> {successMsg}
                 </div>
               )}
 
               {newMatric ? (
                 /* Success step: Matriculation credentials display! */
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center', textAlign: 'center' }}>
-                  <div style={{ fontSize: 52 }}>🎓</div>
+                  <AcademicIcon size={52} color="var(--success-500)" />
                   <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--success-500)' }}>Enrolled & Matriculated!</h3>
                   
                   <div style={{ width: '100%', padding: 16, background: 'rgba(255,255,255,0.05)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-default)', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -640,25 +655,25 @@ export default function Dashboard() {
                     Tx Ref: <code>{txRef}</code>
                   </div>
 
-                  <a
-                    href={authUrl}
-                    target="_blank"
-                    rel="noreferrer"
+                  <button
+                    type="button"
+                    onClick={handleGatewayProceed}
                     className="btn btn-gold"
-                    style={{ width: '100%', textDecoration: 'none', justifyContent: 'center' }}
+                    style={{ width: '100%', justifyContent: 'center', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                    disabled={verifying}
                   >
-                    💳 Pay via Paystack Gateway
-                  </a>
+                    <CardIcon size={16} /> Pay via Paystack Gateway
+                  </button>
 
                   <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>- OR -</div>
 
                   <button
                     className="btn btn-primary"
-                    style={{ width: '100%' }}
+                    style={{ width: '100%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
                     onClick={handleSimulateVerify}
                     disabled={verifying}
                   >
-                    🚀 Simulate Successful Payment & Verify
+                    <ZapIcon size={16} /> Simulate Successful Payment & Verify
                   </button>
                 </div>
               )}
